@@ -53,7 +53,7 @@ Use the issue templates in each repository. For cross-cutting concerns (protocol
 
 ## Publishing a Plugin
 
-You do not need to contribute to this org to publish a Antseed plugin. Implement the `AntseedProviderPlugin` or `AntseedRouterPlugin` interface from `antseed-node` and publish your package to npm. See the `node` repository for interface definitions.
+You do not need to contribute to this org to publish a Antseed plugin. Implement the `AntseedProviderPlugin` or `AntseedRouterPlugin` interface from `@antseed/node` and publish your package to npm. See the `node` repository for interface definitions.
 
 ---
 

@@ -45,10 +45,10 @@ Anyone can publish a plugin to npm. Two types exist:
 
 ### Provider plugins — sell AI capacity
 
-A provider plugin wraps any upstream AI API and exposes it as a seller node on the network. Implement the `AntseedProviderPlugin` interface from `antseed-node` and publish to npm.
+A provider plugin wraps any upstream AI API and exposes it as a seller node on the network. Implement the `AntseedProviderPlugin` interface from `@antseed/node` and publish to npm.
 
 ```ts
-import type { AntseedProviderPlugin } from 'antseed-node'
+import type { AntseedProviderPlugin } from '@antseed/node'
 
 const plugin: AntseedProviderPlugin = {
   name: 'my-provider',
@@ -64,7 +64,7 @@ export default plugin
 A router plugin selects peers from the network and proxies requests from local tools (Claude Code, Aider, Continue.dev, etc.). Implement `AntseedRouterPlugin`.
 
 ```ts
-import type { AntseedRouterPlugin } from 'antseed-node'
+import type { AntseedRouterPlugin } from '@antseed/node'
 
 const plugin: AntseedRouterPlugin = {
   name: 'my-router',
