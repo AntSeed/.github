@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Report a bug in the protocol, CLI, or an official plugin
+about: Report a bug in the protocol, CLI, plugins, or desktop app
 labels: bug
 ---
 
@@ -26,4 +26,4 @@ What actually happened. Include error output if available.
 
 - OS:
 - Node.js version:
-- Package and version (e.g. `antseed-cli@0.1.0`):
+- Package and version (e.g. `@antseed/cli@0.1.0`):

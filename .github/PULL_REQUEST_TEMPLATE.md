@@ -12,6 +12,6 @@ How was this tested? What tests were added or updated?
 
 ## Checklist
 
-- [ ] `npm run build` passes
-- [ ] `npm test` passes
+- [ ] `pnpm run build` passes
+- [ ] `pnpm run test` passes
 - [ ] Breaking changes documented

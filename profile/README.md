@@ -1,41 +1,57 @@
-# Antseed Network
+# AntSeed
 
-**Decentralized peer-to-peer inference marketplace.**
+**A peer-to-peer AI services network.**
 
-Antseed connects AI capacity sellers directly with buyers — no intermediaries, no platform lock-in. Discovery, metering, and payment settlement happen at the protocol level.
+An open market for machines to trade intelligence. Sellers expose idle LLM capacity, buyers discover sellers via DHT and route requests through encrypted P2P connections. Everyone profits. No one controls.
+
+[Website](https://antseed.ai) &middot; [Docs](https://antseed.ai/docs) &middot; [Light Paper](https://antseed.ai/docs/lightpaper) &middot; [Twitter](https://x.com/antseedai) &middot; [GitHub](https://github.com/AntSeed/antseed)
 
 ---
 
 ## How It Works
 
-```
-seller                              buyer
-  │                                   │
-  ├─ provider plugin                  ├─ router plugin
-  │   connects upstream AI API        │   selects peers & proxies requests
-  │                                   │
-  └─ antseed node (seed mode)       └─ antseed node (connect mode)
-         │                                     │
-         └──────────── DHT / P2P ──────────────┘
-```
+**Sellers** run a provider plugin that wraps an upstream AI API (Anthropic, OpenRouter, local Ollama, etc.) and announce capacity on the DHT network.
 
-**Sellers** run a provider plugin that wraps an upstream AI API and exposes capacity on the network.
-**Buyers** run a router plugin that discovers sellers, selects the best peer, and proxies requests from local tools.
+**Buyers** run a router plugin that discovers sellers, scores them on price/latency/reputation, and proxies requests through a local HTTP endpoint that drop-in replaces `ANTHROPIC_BASE_URL` or `OPENAI_BASE_URL`.
 
 ---
 
-## Repositories
+## Monorepo
 
-| Repo | Description |
-|---|---|
-| [node](https://github.com/antseed-ai/node) | Core protocol SDK — DHT, WebRTC, metering, payments |
-| [cli](https://github.com/antseed-ai/cli) | Command-line interface (`antseed seed`, `antseed connect`) |
-| [provider-anthropic](https://github.com/antseed-ai/provider-anthropic) | Official provider plugin for Anthropic |
-| [router-claude-code](https://github.com/antseed-ai/router-claude-code) | Official router plugin for Claude Code / Aider / Continue.dev |
-| [dashboard](https://github.com/antseed-ai/dashboard) | Local web dashboard for node monitoring |
-| [protocol](https://github.com/antseed-ai/protocol) | Protocol specification |
-| [website](https://github.com/antseed-ai/website) | antseed.ai marketing site |
-| [e2e](https://github.com/antseed-ai/e2e) | End-to-end test suite |
+Everything lives in a single repository: [`AntSeed/antseed`](https://github.com/AntSeed/antseed)
+
+```
+packages/             Core libraries (published to npm as @antseed/*)
+  node/               Protocol SDK — P2P, discovery, metering, payments
+  provider-core/      Shared provider infrastructure
+  router-core/        Shared router infrastructure
+
+plugins/              Provider and router plugins
+  provider-anthropic/       Anthropic API key provider
+  provider-claude-code/     Claude Code keychain provider
+  provider-claude-oauth/    Claude OAuth provider
+  provider-openrouter/      OpenRouter multi-model provider
+  provider-local-llm/       Local LLM provider (Ollama, llama.cpp)
+  router-local-chat/        Desktop chat router (latency-optimized)
+  router-local-proxy/       HTTP proxy router (Claude Code, Aider, Continue.dev)
+
+apps/                 Applications
+  cli/                CLI tool and plugin manager
+  desktop/            Electron desktop app
+  dashboard/          Web dashboard (Fastify + React)
+  website/            Marketing website
+```
+
+---
+
+## Quick Start
+
+```bash
+npm install -g @antseed/cli
+antseed init          # Install trusted plugins
+antseed seed          # Start selling
+antseed connect       # Start buying
+```
 
 ---
 
@@ -45,59 +61,16 @@ Anyone can publish a plugin to npm. Two types exist:
 
 ### Provider plugins — sell AI capacity
 
-A provider plugin wraps any upstream AI API and exposes it as a seller node on the network. Implement the `AntseedProviderPlugin` interface from `@antseed/node` and publish to npm.
-
-```ts
-import type { AntseedProviderPlugin } from '@antseed/node'
-
-const plugin: AntseedProviderPlugin = {
-  name: 'my-provider',
-  type: 'provider',
-  // ...
-  createProvider(config) { return new MyProvider(config) },
-}
-export default plugin
-```
+Implement the `AntseedProviderPlugin` interface from `@antseed/node` and publish to npm.
 
 ### Router plugins — buy AI capacity
 
-A router plugin selects peers from the network and proxies requests from local tools (Claude Code, Aider, Continue.dev, etc.). Implement `AntseedRouterPlugin`.
+Implement the `AntseedRouterPlugin` interface from `@antseed/node` and publish to npm.
 
-```ts
-import type { AntseedRouterPlugin } from '@antseed/node'
-
-const plugin: AntseedRouterPlugin = {
-  name: 'my-router',
-  type: 'router',
-  // ...
-  createRouter(config) { return new MyRouter(config) },
-}
-export default plugin
-```
-
-Install and use any published plugin:
-
-```bash
-antseed plugin add my-provider
-antseed seed --provider my-provider
-
-antseed plugin add my-router
-antseed connect --router my-router
-```
-
----
-
-## Getting Started
-
-```bash
-npm install -g antseed-cli
-antseed init
-```
-
-`antseed init` guides you through selecting and installing plugins for seeding or connecting.
+See the [monorepo README](https://github.com/AntSeed/antseed#building-a-plugin) for plugin interfaces and walkthroughs.
 
 ---
 
 ## Contributing
 
-See [CONTRIBUTING.md](https://github.com/antseed-ai/.github/blob/main/CONTRIBUTING.md).
+See [CONTRIBUTING.md](https://github.com/AntSeed/.github/blob/main/CONTRIBUTING.md).
