@@ -2,7 +2,7 @@
 
 **A peer-to-peer AI services network.**
 
-An open market for machines to trade intelligence. Sellers expose idle LLM capacity, buyers discover sellers via DHT and route requests through encrypted P2P connections. Everyone profits. No one controls.
+An open market for machines to trade intelligence. Sellers expose AI capacity, buyers discover sellers via DHT and route requests through encrypted P2P connections. Everyone profits. No one controls.
 
 [Website](https://antseed.com) &middot; [Docs](https://antseed.com/docs) &middot; [Light Paper](https://antseed.com/docs/lightpaper) &middot; [Twitter](https://x.com/antseedai) &middot; [GitHub](https://github.com/AntSeed/antseed)
 
