@@ -2,7 +2,7 @@
 
 **A peer-to-peer AI services network.**
 
-An open market for machines to trade intelligence. Sellers expose AI capacity, buyers discover sellers via DHT and route requests through encrypted P2P connections. Everyone profits. No one controls.
+An open protocol for machines to discover and trade AI services. Providers offer differentiated AI services — skilled agents, TEE-secured inference, managed experiences — and buyers discover them via DHT and route requests through encrypted P2P connections.
 
 [Website](https://antseed.com) &middot; [Docs](https://antseed.com/docs) &middot; [Light Paper](https://antseed.com/docs/lightpaper) &middot; [Twitter](https://x.com/antseedai) &middot; [GitHub](https://github.com/AntSeed/antseed)
 
@@ -10,9 +10,11 @@ An open market for machines to trade intelligence. Sellers expose AI capacity, b
 
 ## How It Works
 
-**Sellers** run a provider plugin that wraps an upstream AI API (Anthropic, OpenRouter, local Ollama, etc.) and announce capacity on the DHT network.
+**Providers** run a provider plugin that wraps an upstream AI API (Anthropic, OpenRouter, local Ollama, etc.) with value-added services and announce offerings on the DHT network.
 
-**Buyers** run a router plugin that discovers sellers, scores them on price/latency/reputation, and proxies requests through a local HTTP endpoint that drop-in replaces `ANTHROPIC_BASE_URL` or `OPENAI_BASE_URL`.
+**Buyers** run a router plugin that discovers providers, scores them on price/latency/reputation, and proxies requests through a local HTTP endpoint that drop-in replaces `ANTHROPIC_BASE_URL` or `OPENAI_BASE_URL`.
+
+> **Provider Compliance:** AntSeed is designed for providers who build differentiated services on top of AI APIs — not for raw resale of API keys or subscription credentials. Subscription-based plugins (`provider-claude-code`, `provider-claude-oauth`) are for local testing only. Providers are responsible for complying with their upstream API provider's terms of service.
 
 ---
 
@@ -59,11 +61,11 @@ antseed connect       # Start buying
 
 Anyone can publish a plugin to npm. Two types exist:
 
-### Provider plugins — sell AI capacity
+### Provider plugins — offer AI services
 
-Implement the `AntseedProviderPlugin` interface from `@antseed/node` and publish to npm.
+Implement the `AntseedProviderPlugin` interface from `@antseed/node` and publish to npm. Providers should add value through skills, TEEs, agents, or managed experiences.
 
-### Router plugins — buy AI capacity
+### Router plugins — consume AI services
 
 Implement the `AntseedRouterPlugin` interface from `@antseed/node` and publish to npm.
 
