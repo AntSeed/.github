@@ -1,8 +1,8 @@
 # AntSeed
 
-**A peer-to-peer AI services network.**
+**The open market for AI inference. No gatekeepers.**
 
-An open protocol for machines to discover and trade AI services. Providers offer differentiated AI services — skilled agents, TEE-secured inference, managed experiences — and buyers discover them via DHT and route requests through encrypted P2P connections.
+A peer-to-peer network for AI services. Anyone can provide — raw inference, skilled agents, TEE-secured environments, routing services — and anyone can consume, directly, with no company in the middle. Discovery via BitTorrent DHT. Transport via WebRTC. Payments settle in USDC on Base.
 
 [Website](https://antseed.com) &middot; [Docs](https://antseed.com/docs) &middot; [Light Paper](https://antseed.com/docs/lightpaper) &middot; [Twitter](https://x.com/antseedai) &middot; [GitHub](https://github.com/AntSeed/antseed)
 
@@ -10,17 +10,40 @@ An open protocol for machines to discover and trade AI services. Providers offer
 
 ## How It Works
 
-**Providers** run a provider plugin that wraps an upstream AI API (Anthropic, OpenRouter, local Ollama, etc.) with value-added services and announce offerings on the DHT network.
+**Providers** serve AI inference on the network however they choose — through frontier API access, local GPUs, fine-tuned models, TEE-secured environments, or skilled agents. They set pricing, register on-chain, and start serving requests. Earnings arrive in USDC automatically.
 
-**Buyers** run a router plugin that discovers providers, scores them on price/latency/reputation, and proxies requests through a local HTTP endpoint that drop-in replaces `ANTHROPIC_BASE_URL` or `OPENAI_BASE_URL`.
+**Buyers** run a local proxy that discovers providers, scores them on price/latency/reputation, and forwards requests through encrypted P2P connections. Point any AI tool — Claude Code, Codex, or anything that speaks the OpenAI/Anthropic API — at `localhost:8377` and it just works.
+
+```
+Your Tool (Claude Code, Codex, curl)
+        ↓
+  localhost:8377 (buyer proxy)
+        ↓ encrypted P2P
+  Provider node
+        ↓
+  Upstream AI API
+```
 
 > **Provider Compliance:** AntSeed is designed for providers who build differentiated services on top of AI APIs — not for raw resale of API keys or subscription credentials. Subscription-based plugins (`provider-claude-code`, `provider-claude-oauth`) are for local testing only. Providers are responsible for complying with their upstream API provider's terms of service.
 
 ---
 
-## Monorepo
+## Quick Start
 
-Everything lives in a single repository: [`AntSeed/antseed`](https://github.com/AntSeed/antseed)
+```bash
+npm install -g @antseed/cli
+
+# Provide AI services
+antseed seller setup     # Interactive provider setup
+antseed seller start     # Start selling
+
+# Consume AI services
+antseed buyer start      # Start buying (proxy at localhost:8377)
+```
+
+---
+
+## Monorepo
 
 ```
 packages/             Core libraries (published to npm as @antseed/*)
@@ -32,28 +55,50 @@ plugins/              Provider and router plugins
   provider-anthropic/       Anthropic API key provider
   provider-claude-code/     Claude Code keychain provider
   provider-claude-oauth/    Claude OAuth provider
-  provider-openrouter/      OpenRouter multi-model provider
+  provider-openai/          OpenAI-compatible provider (OpenAI, Together, OpenRouter)
   provider-local-llm/       Local LLM provider (Ollama, llama.cpp)
-  router-local-chat/        Desktop chat router (latency-optimized)
-  router-local-proxy/       HTTP proxy router (Claude Code, Aider, Continue.dev)
+  router-local/             Local router (Claude Code, Aider, Continue.dev)
 
 apps/                 Applications
-  cli/                CLI tool and plugin manager
+  cli/                CLI tool (@antseed/cli)
   desktop/            Electron desktop app
   dashboard/          Web dashboard (Fastify + React)
   website/            Marketing website
+
+e2e/                  End-to-end tests
+docs/protocol/        Protocol specification
 ```
 
 ---
 
-## Quick Start
+## CLI
+
+Commands are organized by role:
 
 ```bash
-npm install -g @antseed/cli
-antseed init          # Install trusted plugins
-antseed seed          # Start selling
-antseed connect       # Start buying
+# Seller
+antseed seller setup                  # Interactive onboarding
+antseed seller start                  # Start providing (all configured providers)
+antseed seller register               # Register identity on-chain (ERC-8004)
+antseed seller stake <amount>         # Stake USDC (min $10)
+antseed seller emissions claim        # Claim ANTS rewards
+
+# Buyer
+antseed buyer start                   # Start proxy (localhost:8377)
+antseed buyer deposit <amount>        # Deposit USDC for payments
+antseed buyer withdraw <amount>       # Withdraw USDC
+antseed buyer balance                 # Check wallet and deposit balance
+
+# Config
+antseed config seller add-provider together --plugin openai --base-url https://api.together.ai
+antseed config seller add-service together deepseek-v3.1 --input 0.6 --output 1.7
+antseed config seller show
+
+# Network
+antseed network browse                # Discover services and pricing
 ```
+
+Full reference: [CLI Commands](https://antseed.com/docs/commands)
 
 ---
 
@@ -61,15 +106,24 @@ antseed connect       # Start buying
 
 Anyone can publish a plugin to npm. Two types exist:
 
-### Provider plugins — offer AI services
+**Provider plugins** implement `AntseedProviderPlugin` from `@antseed/node` — serve raw inference, build a routing service, or wrap domain expertise as an AI agent. Set your price. Start earning.
 
-Implement the `AntseedProviderPlugin` interface from `@antseed/node` and publish to npm. Providers should add value through skills, TEEs, agents, or managed experiences.
+**Router plugins** implement `AntseedRouterPlugin` from `@antseed/node` — discover providers, score them, and route buyer requests.
 
-### Router plugins — consume AI services
+See [Creating Plugins](https://antseed.com/docs/plugins/creating-plugins) for interfaces and walkthroughs.
 
-Implement the `AntseedRouterPlugin` interface from `@antseed/node` and publish to npm.
+---
 
-See the [monorepo README](https://github.com/AntSeed/antseed#building-a-plugin) for plugin interfaces and walkthroughs.
+## Development
+
+```bash
+pnpm install            # Install all dependencies
+pnpm run build          # Build in dependency order
+pnpm run test           # Run all tests
+pnpm run typecheck      # Type-check all packages
+```
+
+**Tech stack:** Node.js 20+, TypeScript 5.x strict, pnpm workspaces, tsc, Vite, Electron, BitTorrent DHT + WebRTC, USDC on Base.
 
 ---
 
